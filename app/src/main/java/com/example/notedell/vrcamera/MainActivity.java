@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
+//Olá Marilene
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
