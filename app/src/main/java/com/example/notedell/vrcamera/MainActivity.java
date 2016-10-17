@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    /**
+     * Envia um valor especial que será contado como valor inicial
+     * @param view
+     */
     public void initialValue(View view){
 
         int az = (int) azimuth;
@@ -206,10 +210,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-
-    private void testeGit () {
-
-    }
 
 }
 
