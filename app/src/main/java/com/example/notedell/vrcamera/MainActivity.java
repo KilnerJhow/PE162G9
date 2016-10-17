@@ -210,6 +210,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public void testegit2 () {
+
+    }
+
 
 }
 
