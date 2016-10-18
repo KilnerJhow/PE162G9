@@ -17,10 +17,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+//Olá marilene
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private Timer timerAtual = new Timer();
-    private TimerTask task;
 
     private static final String TAG = "My Activity";
 
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView txtPitch;
     private TextView txtRoll;
 
+    private int counter = 0;
+
     float[] mGravity;
     float[] mGeomagnetic;
     float[] mGyroscope;
@@ -39,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     double roll;
 
     private static boolean start = false;
-    private static boolean connected = false;
 
     private SensorManager mSensorManager;
     private Sensor accelerometer;
@@ -64,17 +66,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void turnOnTimer(){
-        task = new TimerTask() {
+        TimerTask task = new TimerTask() {
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
                         sendPosition();
-                        Log.d(TAG,"Ativa timer");
+                        Log.d(TAG, "Ativa timer");
+                        counter = 0;
                     }
                 });
-            }};
+            }
+        };
 
-        timerAtual.schedule(task, 300, 500);
+        timerAtual.schedule(task, 300, 50);
     }
 
     @Override
@@ -128,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             txtPitch.setText("Pitch: " + (int)pitch);
             txtRoll.setText("Roll: " + (int)roll);
             //Delay();
+            counter++;
         }
     }
 
@@ -135,9 +140,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void sendPosition() {
 
         if(start) {
-            int az = (int) azimuth;
-            int pt = (int) pitch;
-            int ro = (int) roll;
+            int az = (int) azimuth/counter;
+            int pt = (int) pitch/counter;
+            int ro = (int) roll/counter;
             //String data = Double.toString(az) + "\n" + Double.toString(pt) + "\n" + Double.toString(ro) + "\n";
             String data = Integer.toString(az) + "&" + Integer.toString(pt) + "&" + Integer.toString(ro) + "&";
 
@@ -168,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     /**
      * Envia um valor especial que será contado como valor inicial
-     * @param view
+     *
      */
     public void initialValue(View view){
 
