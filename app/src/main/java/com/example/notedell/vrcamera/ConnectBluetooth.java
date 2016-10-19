@@ -23,7 +23,7 @@ import java.util.Set;
 public class ConnectBluetooth extends ListActivity{
 
     static BluetoothThread btt;
-    Handler writeHandler;
+    BluetoothAdapter btAdapter;
 
     public static int ENABLE_BLUETOOTH = 1;
 
@@ -43,13 +43,12 @@ public class ConnectBluetooth extends ListActivity{
 
         /*  Usa o adaptador Bluetooth para obter uma lista de dispositivos pareados.
          */
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if(!btAdapter.isEnabled()) {
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(intent, ENABLE_BLUETOOTH);
         }
-        while(!btAdapter.isEnabled()) {}
         if(btAdapter.isEnabled()) {
             Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
 
@@ -117,9 +116,6 @@ public class ConnectBluetooth extends ListActivity{
             }
         });
 
-        // Get the handler that is used to send messages
-        //writeHandler = btt.getWriteHandler();
-
         // Run the thread
         btt.start();
 
@@ -137,6 +133,24 @@ public class ConnectBluetooth extends ListActivity{
             if(resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(),"Erro! Bluetooth não Ativo",
                                                                         Toast.LENGTH_SHORT).show();
+                close();
+            }
+
+            if(resultCode == RESULT_OK) {
+                if(btAdapter.isEnabled()) {
+                    Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+
+        /*  Cria um modelo para a lista e o adiciona à tela.
+            Se houver dispositivos pareados, adiciona cada um à lista.
+         */
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+                    setListAdapter(adapter);
+                    if (pairedDevices.size() > 0) {
+                        for (BluetoothDevice device : pairedDevices) {
+                            adapter.add(device.getName() + "\n" + device.getAddress());
+                        }
+                    }
+                }
             }
         }
 
