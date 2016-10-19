@@ -41,7 +41,7 @@ public class BluetoothThread extends Thread {
     private InputStream inStream;
 
     // Handlers used to pass data between threads
-    private final Handler readHandler;
+    private Handler readHandler;
     private Handler writeHandler;
 
     // Buffer used to parse messages
@@ -172,6 +172,8 @@ public class BluetoothThread extends Thread {
 
         } catch (Exception e) {
             Log.e(TAG, "Write failed!", e);
+            disconnect();
+            sendToReadHandler("DISCONNECTED");
         }
     }
 
@@ -252,8 +254,8 @@ public class BluetoothThread extends Thread {
         connected = false;
     }
 
-    public boolean isConnected (){
-        return this.isConnected();
+    public void setReadHandler (Handler handler){
+        this.readHandler = handler;
     }
 
 
