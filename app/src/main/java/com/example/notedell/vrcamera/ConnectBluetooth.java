@@ -80,7 +80,7 @@ public class ConnectBluetooth extends ListActivity{
         String devName = item.substring(0, item.indexOf("\n"));
         String devAddress = item.substring(item.indexOf("\n") + 1, item.length());
 
-        Toast.makeText(getApplicationContext(),devAddress,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),devAddress,Toast.LENGTH_SHORT).show();
 
         btt = new BluetoothThread(devAddress, new Handler() {
 
@@ -94,7 +94,7 @@ public class ConnectBluetooth extends ListActivity{
                     case "CONNECTED": {
                         TextView tv = (TextView) findViewById(R.id.statusText);
                         tv.setText("Conectado.");
-
+                        Toast.makeText(getApplicationContext(),"Conectado", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
 
@@ -104,11 +104,13 @@ public class ConnectBluetooth extends ListActivity{
                     } case "DISCONNECTED": {
                         TextView tv = (TextView) findViewById(R.id.statusText);
                         tv.setText("Desconectado.");
+                        getListView().setEnabled(true);
                         break;
                     }
                     case "CONNECTION FAILED": {
                         TextView tv = (TextView) findViewById(R.id.statusText);
                         tv.setText("Falha na Conexão!");
+                        getListView().setEnabled(true);
                         btt = null;
                         break;
                     }
@@ -121,6 +123,7 @@ public class ConnectBluetooth extends ListActivity{
 
         TextView tv = (TextView) findViewById(R.id.statusText);
         tv.setText("Conectando...");
+        getListView().setEnabled(false);
 
     }
 
