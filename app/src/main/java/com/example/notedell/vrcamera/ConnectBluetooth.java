@@ -131,7 +131,7 @@ public class ConnectBluetooth extends ListActivity{
 
         if(requestCode == ENABLE_BLUETOOTH) {
             if(resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(),"Erro! Bluetooth não Ativo",
+                Toast.makeText(getApplicationContext(),"Erro! Bluetooth não ativo!",
                                                                         Toast.LENGTH_SHORT).show();
                 close();
             }
