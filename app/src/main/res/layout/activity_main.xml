@@ -45,17 +45,32 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enviar"
-        android:id="@+id/button2"
+        android:text="Iniciar"
+        android:id="@+id/button3"
         android:layout_gravity="center_horizontal"
         android:onClick="send"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Iniciar"
-        android:id="@+id/button3"
+        android:text="Valor Inicial"
+        android:id="@+id/button"
         android:layout_gravity="center_horizontal"
-        android:onClick="send"/>
+        android:onClick="initialValue"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Desconectar"
+            android:id="@+id/button2"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="disconnect"/>
+    </RelativeLayout>
 
 </LinearLayout>

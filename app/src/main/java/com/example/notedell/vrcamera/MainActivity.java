@@ -194,6 +194,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    public void disconnect(View view) {
+        ConnectBluetooth.btt.interrupt();
+        ConnectBluetooth.btt = null;
+
+        startConnectBluetooth();
+
+    }
+
     private void checkSensors() {
 
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null){
@@ -230,8 +238,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     tv.setText("Desconectado.");
 
                     Toast.makeText(getApplicationContext(),"Desconectado",
-                            Toast.LENGTH_SHORT).show();
-
+                                                                        Toast.LENGTH_SHORT).show();
+                    startConnectBluetooth();
                     break;
                 }
             }
@@ -239,8 +247,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     };
 
-    public void close() {
+    private void close() {
         this.finish();
+    }
+
+    private void startConnectBluetooth(){
+        Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);
+        startActivity(intent);
+        close();
     }
 
 }
