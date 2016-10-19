@@ -148,10 +148,13 @@ public class BluetoothThread extends Thread {
                 // Convert read bytes into a string
                 s = new String(inBuffer, "ASCII");
                 s = s.substring(0, bytesRead);
+                Log.d(TAG,"[RECV] "+ s);
             }
 
         } catch (Exception e) {
             Log.e(TAG, "Read failed!", e);
+            disconnect();
+            sendToReadHandler("DISCONNECTED");
         }
 
         return s;
@@ -256,6 +259,11 @@ public class BluetoothThread extends Thread {
 
     public void setReadHandler (Handler handler){
         this.readHandler = handler;
+    }
+
+    public String getRead(){
+        String s = read();
+        return s;
     }
 
 
