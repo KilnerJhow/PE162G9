@@ -1,5 +1,6 @@
 package com.example.notedell.vrcamera;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,8 +18,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-//Olá marilene
-
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private Timer timerAtual = new Timer();
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String TAG = "My Activity";
 
     Handler writeHandler;
+
     private final Handler handler = new Handler();
 
     private TextView txtAzimuth;
@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);    // Register the sensor listeners
 
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        ConnectBluetooth.btt.setReadHandler(readHandler);
+
         checkSensors();
 
         txtAzimuth = (TextView) findViewById(R.id.txtAzimuth);
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 handler.post(new Runnable() {
                     public void run() {
                         sendPosition();
-                        Log.d(TAG, "Ativa timer");
+                        //Log.d(TAG, "Ativa timer");
                         counter = 0;
                     }
                 });
@@ -140,9 +144,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void sendPosition() {
 
         if(start) {
-            int az = (int) azimuth/counter;
-            int pt = (int) pitch/counter;
-            int ro = (int) roll/counter;
+            int az = (int) azimuth;
+            int pt = (int) pitch;
+            int ro = (int) roll;
             //String data = Double.toString(az) + "\n" + Double.toString(pt) + "\n" + Double.toString(ro) + "\n";
             String data = Integer.toString(az) + "&" + Integer.toString(pt) + "&" + Integer.toString(ro) + "&";
 
@@ -162,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String data = Integer.toString(az) + "&" +Integer.toString(pt) + "&" + Integer.toString(ro) + "&" ;
         //String data = Integer.toString(az) + "\n" + Integer.toString(pt) + "\n" + Integer.toString(ro) + "\n";
 
+        Log.d(TAG, "Button pressed");
 
         Message msg = Message.obtain();
         msg.obj = data;
@@ -190,8 +195,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void checkSensors() {
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        writeHandler = ConnectBluetooth.btt.getWriteHandler();
 
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null){
             magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -215,10 +218,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public void testegit2 () {
+    Handler readHandler = new Handler () {
+        @Override
+        public void handleMessage(Message msg) {
 
+            String s = (String) msg.obj;
+
+            switch (s) {
+                case "DISCONNECTED": {
+                    TextView tv = (TextView) findViewById(R.id.statusText);
+                    tv.setText("Desconectado.");
+
+                    Toast.makeText(getApplicationContext(),"Desconectado",
+                            Toast.LENGTH_SHORT).show();
+
+                    break;
+                }
+            }
+
+        }
+    };
+
+    public void close() {
+        this.finish();
     }
-
 
 }
 
