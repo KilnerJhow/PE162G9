@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -75,14 +76,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 handler.post(new Runnable() {
                     public void run() {
                         sendPosition();
-                        //Log.d(TAG, "Ativa timer");
                         counter = 0;
                     }
                 });
             }
         };
 
-        timerAtual.schedule(task, 300, 50);
+        timerAtual.schedule(task, 300, 1000);
     }
 
     @Override
@@ -194,6 +194,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    private void parseMessage(String d){
+        String s = d;
+        Log.d(TAG,"[RECV] " + d);
+
+    }
+
     private void checkSensors() {
 
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null){
@@ -223,20 +229,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public void handleMessage(Message msg) {
 
             String s = (String) msg.obj;
+            Log.d(TAG, s);
 
-            switch (s) {
-                case "DISCONNECTED": {
+            if (s.equals("DISCONNECT")) {
                     TextView tv = (TextView) findViewById(R.id.statusText);
                     tv.setText("Desconectado.");
 
-                    Toast.makeText(getApplicationContext(),"Desconectado",
-                                                                        Toast.LENGTH_SHORT).show();
                     startConnectBluetooth();
-                    break;
-                }
+                                    }
+            else if(!s.equals("DISCONNECT")){
+                parseMessage(s);
             }
-
         }
+
     };
 
     public void disconnect(View view) {
@@ -252,6 +257,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void startConnectBluetooth(){
+
+        Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);
         startActivity(intent);
         close();
