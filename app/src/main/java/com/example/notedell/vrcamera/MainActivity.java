@@ -6,8 +6,6 @@
 
 
 
-
-
 package com.example.notedell.vrcamera;
 
 import android.content.Intent;
