@@ -1,3 +1,13 @@
+/***
+ *
+ * Low-Pass filter by: https://www.built.io/blog/applying-low-pass-filter-to-android-sensor-s-readings
+ *
+ */
+
+
+
+
+
 package com.example.notedell.vrcamera;
 
 import android.content.Intent;
@@ -14,7 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Objects;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,9 +48,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float[] mGravity;
     float[] mGeomagnetic;
     float[] mGyroscope;
-    double azimuth;
-    double pitch;
-    double roll;
+    float azimuth;
+    float pitch;
+    float roll;
+
+    static final float ALPHA = 0.25f;
 
     private static boolean start = false;
 
@@ -107,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent event) {
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-            mGravity = event.values.clone();
+            mGravity = lowPass(event.values.clone(),mGravity);
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-            mGeomagnetic = event.values.clone();
+            mGeomagnetic = lowPass(event.values.clone(),mGeomagnetic);
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE)
             mGyroscope = event.values.clone();
 
@@ -118,18 +130,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float R[] = new float[9];
             float I[] = new float[9];
             boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+
             if (success) {
                 //orientation[0] = Azimuth - Z - 180° a -180°
                 //orientation[1] = Pitch - X - 180° a -180°
                 //orientation[2] = roll - Y - 90° a -90°
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                azimuth = Math.toDegrees(orientation[0]); // orientation contains: azimut, pitch and roll
-                //azimuth = orientation[0];
-                pitch = Math.toDegrees(orientation[1]);
-                //pitch = orientation[1];
-                roll = Math.toDegrees(orientation[2]);
-                //roll = orientation[2];
+                azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
+                pitch = (float)(((orientation[1]*180/Math.PI))+90);
+                roll = (float)(((orientation[2]*180/Math.PI)));
             }
 
             txtAzimuth.setText("Azimuth: " + (int)azimuth);
@@ -138,6 +148,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             //Delay();
             counter++;
         }
+    }
+
+    protected float[] lowPass( float[] input, float[] output ) {
+        if ( output == null ) return input;
+        for ( int i=0; i<input.length; i++ ) {
+            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+        }
+        return output;
     }
 
 
