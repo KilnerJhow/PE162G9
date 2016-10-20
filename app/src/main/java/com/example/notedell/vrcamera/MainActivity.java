@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private static final String TAG = "My Activity";
 
-    Handler writeHandler;
+    private Handler writeHandler;
 
     private final Handler handler = new Handler();
 
@@ -43,12 +43,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private int counter = 0;
 
-    float[] mGravity;
-    float[] mGeomagnetic;
-    float[] mGyroscope;
-    float azimuth;
-    float pitch;
-    float roll;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
+    private float[] mGyroscope;
+    private float azimuth;
+    private float pitch;
+    private float roll;
 
     static final float ALPHA = 0.25f;
 

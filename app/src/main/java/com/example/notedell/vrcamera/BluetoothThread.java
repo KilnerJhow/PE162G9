@@ -261,10 +261,4 @@ public class BluetoothThread extends Thread {
         this.readHandler = handler;
     }
 
-    public String getRead(){
-        String s = read();
-        return s;
-    }
-
-
 }
