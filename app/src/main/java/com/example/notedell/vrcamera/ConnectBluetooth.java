@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,8 +22,9 @@ import java.util.Set;
  */
 public class ConnectBluetooth extends ListActivity{
 
+    private static final String TAG = "Connect Bluetooth";
     static BluetoothThread btt;
-    BluetoothAdapter btAdapter;
+    private BluetoothAdapter btAdapter;
 
     public static int ENABLE_BLUETOOTH = 1;
 
@@ -34,6 +36,13 @@ public class ConnectBluetooth extends ListActivity{
             Adiciona um título à lista de dispositivos pareados utilizando
         o layout text_header.xml.
         */
+
+        if(btt != null) {
+            btt.interrupt();
+            btt = null;
+            Log.d(TAG, "Connection Ended.");
+        }
+
         ListView lv = getListView();
         LayoutInflater inflater = getLayoutInflater();
         View header = inflater.inflate(R.layout.act_paired_devices, lv, false);
@@ -93,11 +102,11 @@ public class ConnectBluetooth extends ListActivity{
                     case "CONNECTED": {
                         TextView tv = (TextView) findViewById(R.id.statusText);
                         tv.setText("Conectado.");
+
                         Toast.makeText(getApplicationContext(),"Conectado", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
-
-                        //close();
+                        close();
 
                         break;
                     } case "DISCONNECTED": {

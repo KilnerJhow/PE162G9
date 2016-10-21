@@ -27,19 +27,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private Timer timerAtual = new Timer();
 
-    private static final String TAG = "My Activity";
+    private static final String TAG = "Main Activity";
 
-    private Handler writeHandler;
+    private static Handler writeHandler;
 
     private final Handler handler = new Handler();
 
     private TextView txtAzimuth;
     private TextView txtPitch;
     private TextView txtRoll;
-
-    private int counter = 0;
-
-    BluetoothThread btt;
 
     private float[] mGravity;
     private float[] mGeomagnetic;
@@ -63,10 +59,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);    // Register the sensor listeners
 
+        Log.d(TAG,"On create Called");
+
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        this.btt = ConnectBluetooth.btt;
-        writeHandler = this.btt.getWriteHandler();
-        //ConnectBluetooth.btt.setReadHandler(readHandler);
+        writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        Log.d(TAG, "WriteHandler called");
+
+        ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
 
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         };
 
-        timerAtual.schedule(task, 300, 10);
+        timerAtual.schedule(task, 300, 50);
     }
 
     @Override
@@ -244,8 +243,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.d(TAG, s);
 
             if (s.equals("DISCONNECT")) {
-                    TextView tv = (TextView) findViewById(R.id.statusText);
-                    tv.setText("Desconectado.");
+                    //Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
 
                     startConnectBluetooth();
             }
@@ -253,16 +251,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     };
 
-    public void disconnect(View view) {
+    public void disconnectButtonPressed(View v) {
+        Log.v(TAG, "Disconnect button pressed.");
 
-        Log.v(TAG,"Disconnect button pressed");
-        if(this.btt != null) {
-            btt.interrupt();
-            btt = null;
+        if(ConnectBluetooth.btt != null) {
+            ConnectBluetooth.btt.interrupt();
             ConnectBluetooth.btt = null;
+            startConnectBluetooth();
         }
-        startConnectBluetooth();
-
     }
 
     private void close() {
@@ -272,7 +268,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void startConnectBluetooth(){
 
         start = false;
-        Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
+        writeHandler = null;
+        Log.d(TAG, "WriteHandler ended");
         Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);
         startActivity(intent);
         close();
