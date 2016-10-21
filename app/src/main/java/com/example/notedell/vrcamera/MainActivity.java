@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView txtAzimuth;
     private TextView txtPitch;
     private TextView txtRoll;
+    private TextView tvRead;
 
     private float[] mGravity;
     private float[] mGeomagnetic;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         txtAzimuth = (TextView) findViewById(R.id.txtAzimuth);
         txtPitch = (TextView) findViewById(R.id.txtPitch);
         txtRoll = (TextView) findViewById(R.id.txtRoll);
+        tvRead = (TextView) findViewById(R.id.tvRead);
 
 
         turnOnTimer();
@@ -242,8 +244,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             String s = (String) msg.obj;
             Log.d(TAG, s);
 
+            tvRead.setText(s);
+
             if (s.equals("DISCONNECT")) {
-                    //Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
 
                     startConnectBluetooth();
             }
@@ -268,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void startConnectBluetooth(){
 
         start = false;
-        //Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
         writeHandler = null;
         Log.d(TAG, "WriteHandler ended");
         Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);

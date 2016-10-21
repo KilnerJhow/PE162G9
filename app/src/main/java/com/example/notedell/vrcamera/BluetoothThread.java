@@ -146,6 +146,7 @@ public class BluetoothThread extends Thread {
                 // Convert read bytes into a string
                 s = new String(inBuffer, "ASCII");
                 s = s.substring(0, bytesRead);
+                Log.d(TAG,"[RECV]: "+ s);
             }
 
         } catch (Exception e) {
