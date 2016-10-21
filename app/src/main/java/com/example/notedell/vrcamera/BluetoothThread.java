@@ -1,13 +1,5 @@
 package com.example.notedell.vrcamera;
 
-
-/***
- * Author: hmartiro
- * Visit he on Github: https://github.com/hmartiro/android-arduino-bluetooth
- *
- * Modified by: Jonathan Kilner
- */
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -19,6 +11,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+/**
+ * Created by Note Dell on 07/10/2016.
+ */
 public class BluetoothThread extends Thread {
 
     // Tag for logging
@@ -42,12 +37,10 @@ public class BluetoothThread extends Thread {
 
     // Handlers used to pass data between threads
     private Handler readHandler;
-    private Handler writeHandler;
+    private final Handler writeHandler;
 
     // Buffer used to parse messages
     private String rx_buffer = "";
-
-    private boolean connected = false;
 
     /**
      * Constructor, takes in the MAC address of the remote Bluetooth device
@@ -58,6 +51,10 @@ public class BluetoothThread extends Thread {
 
         this.address = address.toUpperCase();
         this.readHandler = handler;
+        this.socket = null;
+        this.outStream = null;
+        this.inStream = null;
+        Log.d(TAG, "Thread Created");
 
         writeHandler = new Handler() {
             @Override
@@ -72,6 +69,7 @@ public class BluetoothThread extends Thread {
      * handler will be written to the Bluetooth socket.
      */
     public Handler getWriteHandler() {
+        Log.d(TAG,"Write Handler getted");
         return writeHandler;
     }
 
@@ -93,6 +91,7 @@ public class BluetoothThread extends Thread {
 
         // Create a socket with the remote device using this protocol
         socket = remoteDevice.createRfcommSocketToServiceRecord(uuid);
+        Log.i(TAG, "Socket Created.");
 
         // Make sure Bluetooth adapter is not in discovery mode
         adapter.cancelDiscovery();
@@ -106,8 +105,6 @@ public class BluetoothThread extends Thread {
         inStream = socket.getInputStream();
 
         Log.i(TAG, "Connected successfully to " + address + ".");
-        connected = true;
-
     }
 
     /**
@@ -124,10 +121,11 @@ public class BluetoothThread extends Thread {
         }
 
         if (socket != null) {
-            try {socket.close();} catch (Exception e) { e.printStackTrace(); }
+            try {
+                socket.close();
+                Log.i(TAG, "Socket Closed");
+            } catch (Exception e) { e.printStackTrace(); }
         }
-
-        connected = false;
     }
 
     /**
@@ -148,13 +146,10 @@ public class BluetoothThread extends Thread {
                 // Convert read bytes into a string
                 s = new String(inBuffer, "ASCII");
                 s = s.substring(0, bytesRead);
-                Log.d(TAG,"[RECV] "+ s);
             }
 
         } catch (Exception e) {
             Log.e(TAG, "Read failed!", e);
-            disconnect();
-            sendToReadHandler("DISCONNECTED");
         }
 
         return s;
@@ -175,8 +170,6 @@ public class BluetoothThread extends Thread {
 
         } catch (Exception e) {
             Log.e(TAG, "Write failed!", e);
-            disconnect();
-            sendToReadHandler("DISCONNECTED");
         }
     }
 
@@ -225,7 +218,6 @@ public class BluetoothThread extends Thread {
         try {
             connect();
             sendToReadHandler("CONNECTED");
-            connected = true;
         } catch (Exception e) {
             Log.e(TAG, "Failed to connect!", e);
             sendToReadHandler("CONNECTION FAILED");
@@ -254,11 +246,9 @@ public class BluetoothThread extends Thread {
         // If thread is interrupted, close connections
         disconnect();
         sendToReadHandler("DISCONNECTED");
-        connected = false;
     }
 
-    public void setReadHandler (Handler handler){
+    public void setReadHandler(Handler handler){
         this.readHandler = handler;
     }
-
 }

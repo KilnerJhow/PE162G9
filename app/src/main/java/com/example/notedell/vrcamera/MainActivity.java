@@ -27,17 +27,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private Timer timerAtual = new Timer();
 
-    private static final String TAG = "My Activity";
+    private static final String TAG = "Main Activity";
 
-    private Handler writeHandler;
+    private static Handler writeHandler;
 
     private final Handler handler = new Handler();
 
     private TextView txtAzimuth;
     private TextView txtPitch;
     private TextView txtRoll;
-
-    private int counter = 0;
 
     private float[] mGravity;
     private float[] mGeomagnetic;
@@ -61,8 +59,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);    // Register the sensor listeners
 
+        Log.d(TAG,"On create Called");
+
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        Log.d(TAG, "WriteHandler called");
+
         ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
@@ -82,13 +84,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 handler.post(new Runnable() {
                     public void run() {
                         sendPosition();
-                        counter = 0;
                     }
                 });
             }
         };
 
-        timerAtual.schedule(task, 300, 1000);
+        timerAtual.schedule(task, 300, 50);
     }
 
     @Override
@@ -131,16 +132,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //orientation[2] = roll - Y - 90° a -90°
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
+                /*azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
                 pitch = (float)(((orientation[1]*180/Math.PI))+90);
-                roll = (float)(((orientation[2]*180/Math.PI)));
+                roll = (float)(((orientation[2]*180/Math.PI)));*/
+
+                azimuth = (float) Math.toDegrees(orientation[0]);
+                pitch = (float) Math.toDegrees(orientation[1]);
+                roll = (float) Math.toDegrees(orientation[2]);
             }
 
             txtAzimuth.setText("Azimuth: " + (int)azimuth);
             txtPitch.setText("Pitch: " + (int)pitch);
             txtRoll.setText("Roll: " + (int)roll);
             //Delay();
-            counter++;
         }
     }
 
@@ -206,11 +210,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-    private void parseMessage(String d){
-        String s = d;
-        Log.d(TAG,"[RECV] " + d);
-
-    }
 
     private void checkSensors() {
 
@@ -244,24 +243,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.d(TAG, s);
 
             if (s.equals("DISCONNECT")) {
-                    TextView tv = (TextView) findViewById(R.id.statusText);
-                    tv.setText("Desconectado.");
+                    //Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
 
                     startConnectBluetooth();
-                                    }
-            else if(!s.equals("DISCONNECT")){
-                parseMessage(s);
             }
         }
 
     };
 
-    public void disconnect(View view) {
-        ConnectBluetooth.btt.interrupt();
-        ConnectBluetooth.btt = null;
+    public void disconnectButtonPressed(View v) {
+        Log.v(TAG, "Disconnect button pressed.");
 
-        startConnectBluetooth();
-
+        if(ConnectBluetooth.btt != null) {
+            ConnectBluetooth.btt.interrupt();
+            ConnectBluetooth.btt = null;
+            startConnectBluetooth();
+        }
     }
 
     private void close() {
@@ -270,7 +267,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void startConnectBluetooth(){
 
-        Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
+        start = false;
+        //Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
+        writeHandler = null;
+        Log.d(TAG, "WriteHandler ended");
         Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);
         startActivity(intent);
         close();
