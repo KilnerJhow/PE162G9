@@ -41,8 +41,8 @@ public class BluetoothThread extends Thread {
     private InputStream inStream;
 
     // Handlers used to pass data between threads
-    private Handler readHandler;
-    private Handler writeHandler;
+    private final Handler readHandler;
+    private final Handler writeHandler;
 
     // Buffer used to parse messages
     private String rx_buffer = "";
@@ -62,7 +62,9 @@ public class BluetoothThread extends Thread {
         writeHandler = new Handler() {
             @Override
             public void handleMessage(Message message) {
-                write((String) message.obj);
+
+                    write((String) message.obj);
+
             }
         };
     }
@@ -164,7 +166,6 @@ public class BluetoothThread extends Thread {
      * Write data to the socket.
      */
     private void write(String s) {
-
         try {
             // Add the delimiter
             //s += DELIMITER;
@@ -175,8 +176,6 @@ public class BluetoothThread extends Thread {
 
         } catch (Exception e) {
             Log.e(TAG, "Write failed!", e);
-            disconnect();
-            sendToReadHandler("DISCONNECTED");
         }
     }
 
@@ -221,6 +220,7 @@ public class BluetoothThread extends Thread {
      */
     public void run() {
 
+        Log.d(TAG, String.valueOf(connected));
         // Attempt to connect and exit the thread if it failed
         try {
             connect();
@@ -230,6 +230,7 @@ public class BluetoothThread extends Thread {
             Log.e(TAG, "Failed to connect!", e);
             sendToReadHandler("CONNECTION FAILED");
             disconnect();
+            connected = false;
             return;
         }
 
@@ -255,10 +256,6 @@ public class BluetoothThread extends Thread {
         disconnect();
         sendToReadHandler("DISCONNECTED");
         connected = false;
-    }
-
-    public void setReadHandler (Handler handler){
-        this.readHandler = handler;
     }
 
 }

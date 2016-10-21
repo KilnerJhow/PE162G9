@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private int counter = 0;
 
+    BluetoothThread btt;
+
     private float[] mGravity;
     private float[] mGeomagnetic;
     private float[] mGyroscope;
@@ -62,8 +64,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);    // Register the sensor listeners
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        writeHandler = ConnectBluetooth.btt.getWriteHandler();
-        ConnectBluetooth.btt.setReadHandler(readHandler);
+        this.btt = ConnectBluetooth.btt;
+        writeHandler = this.btt.getWriteHandler();
+        //ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
 
@@ -82,13 +85,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 handler.post(new Runnable() {
                     public void run() {
                         sendPosition();
-                        counter = 0;
                     }
                 });
             }
         };
 
-        timerAtual.schedule(task, 300, 1000);
+        timerAtual.schedule(task, 300, 10);
     }
 
     @Override
@@ -131,16 +133,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //orientation[2] = roll - Y - 90° a -90°
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
+                /*azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
                 pitch = (float)(((orientation[1]*180/Math.PI))+90);
-                roll = (float)(((orientation[2]*180/Math.PI)));
+                roll = (float)(((orientation[2]*180/Math.PI)));*/
+
+                azimuth = (float) Math.toDegrees(orientation[0]);
+                pitch = (float) Math.toDegrees(orientation[1]);
+                roll = (float) Math.toDegrees(orientation[2]);
             }
 
             txtAzimuth.setText("Azimuth: " + (int)azimuth);
             txtPitch.setText("Pitch: " + (int)pitch);
             txtRoll.setText("Roll: " + (int)roll);
             //Delay();
-            counter++;
         }
     }
 
@@ -206,11 +211,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-    private void parseMessage(String d){
-        String s = d;
-        Log.d(TAG,"[RECV] " + d);
-
-    }
 
     private void checkSensors() {
 
@@ -248,18 +248,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     tv.setText("Desconectado.");
 
                     startConnectBluetooth();
-                                    }
-            else if(!s.equals("DISCONNECT")){
-                parseMessage(s);
             }
         }
 
     };
 
     public void disconnect(View view) {
-        ConnectBluetooth.btt.interrupt();
-        ConnectBluetooth.btt = null;
 
+        Log.v(TAG,"Disconnect button pressed");
+        if(this.btt != null) {
+            btt.interrupt();
+            btt = null;
+            ConnectBluetooth.btt = null;
+        }
         startConnectBluetooth();
 
     }
@@ -270,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void startConnectBluetooth(){
 
+        start = false;
         Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);
         startActivity(intent);
