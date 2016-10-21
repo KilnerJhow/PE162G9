@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
+        if(ConnectBluetooth.btt == null) {
+            startConnectBluetooth();
+        }
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -105,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
+        if(ConnectBluetooth.btt != null) {
+            ConnectBluetooth.btt.interrupt();
+            ConnectBluetooth.btt = null;
+            start = false;
+        }
+
     }
 
     @Override
@@ -190,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         msg.obj = data;
         writeHandler.sendMessage(msg);
 
-        //start = true;
+        start = true;
 
     }
 
