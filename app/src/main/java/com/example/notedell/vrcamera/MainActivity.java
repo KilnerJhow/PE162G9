@@ -26,6 +26,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private Timer timerAtual = new Timer();
+    TimerTask task;
 
     private static final String TAG = "Main Activity";
 
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void turnOnTimer(){
-        TimerTask task = new TimerTask() {
+        task = new TimerTask() {
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ConnectBluetooth.btt.interrupt();
             ConnectBluetooth.btt = null;
             start = false;
+            timerAtual.cancel();
         }
 
     }
