@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         writeHandler = ConnectBluetooth.btt.getWriteHandler();
+
         Log.d(TAG, "WriteHandler called");
 
         ConnectBluetooth.btt.setReadHandler(readHandler);
@@ -76,11 +77,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         txtRoll = (TextView) findViewById(R.id.txtRoll);
         tvRead = (TextView) findViewById(R.id.tvRead);
 
-
-        turnOnTimer();
-
     }
 
+    /***
+     * Timer which controls the data that is sent
+     */
     private void turnOnTimer(){
         task = new TimerTask() {
             public void run() {
@@ -157,11 +158,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             txtAzimuth.setText("Azimuth: " + (int)azimuth);
             txtPitch.setText("Pitch: " + (int)pitch);
             txtRoll.setText("Roll: " + (int)roll);
-            //Delay();
         }
     }
 
-    protected float[] lowPass( float[] input, float[] output ) {
+
+    /**
+     * Filtered data comes from the function onSensorChanged
+     * @param input values which comes from the sensors
+     * @param output variable which store the filtered value
+     * @return return the filtered value
+     */
+    private float[] lowPass( float[] input, float[] output ) {
         if ( output == null ) return input;
         for ( int i=0; i<input.length; i++ ) {
             output[i] = output[i] + ALPHA * (input[i] - output[i]);
@@ -169,8 +176,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return output;
     }
 
-
-    public void sendPosition() {
+    /***
+     * Sends data continuously through the "turnOnTimer"
+     */
+    private void sendPosition() {
 
         if(start) {
             int az = (int) azimuth;
@@ -187,6 +196,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    /***
+     * Sends data when the button is pressed
+     * @param view
+     */
     public void send(View view) {
 
         int az = (int) azimuth;
@@ -203,11 +216,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         start = true;
 
+        turnOnTimer();
+
     }
 
     /**
-     * Envia um valor especial que será contado como valor inicial
-     *
+     * Sends a special value which is treated as initial value, when the button
+     * "Valor Inicial" is pressioned.
      */
     public void initialValue(View view){
 
@@ -222,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     }
+
 
 
     private void checkSensors() {
@@ -248,6 +264,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+
+    /***
+     * Function that receive messages from thread, for disconnect and ends the
+     * MainActivity
+     */
     Handler readHandler = new Handler () {
         @Override
         public void handleMessage(Message msg) {
@@ -266,6 +287,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     };
 
+    /***
+     * Used for disconnect the bluetooth socket
+     * @param v
+     */
     public void disconnectButtonPressed(View v) {
         Log.v(TAG, "Disconnect button pressed.");
 
@@ -276,10 +301,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    /***
+     * Ends the activity
+     */
     private void close() {
         this.finish();
     }
 
+
+    /***
+     * Used for start the initial activity, when the bluetooth connection ends
+     */
     private void startConnectBluetooth(){
 
         start = false;

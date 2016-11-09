@@ -97,7 +97,6 @@ public class ConnectBluetooth extends ListActivity{
 
                 String s = (String) message.obj;
 
-                // Do something with the message
                 switch (s) {
                     case "CONNECTED": {
                         TextView tv = (TextView) findViewById(R.id.statusText);

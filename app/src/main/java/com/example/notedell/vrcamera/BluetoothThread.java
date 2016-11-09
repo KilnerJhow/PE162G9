@@ -47,7 +47,7 @@ public class BluetoothThread extends Thread {
      * and a Handler for received messages.
      *
      */
-    public BluetoothThread(String address, Handler handler) {
+    BluetoothThread(String address, Handler handler) {
 
         this.address = address.toUpperCase();
         this.readHandler = handler;
@@ -68,7 +68,7 @@ public class BluetoothThread extends Thread {
      * Return the write handler for this connection. Messages received by this
      * handler will be written to the Bluetooth socket.
      */
-    public Handler getWriteHandler() {
+    Handler getWriteHandler() {
         Log.d(TAG,"Write Handler getted");
         return writeHandler;
     }
@@ -249,7 +249,7 @@ public class BluetoothThread extends Thread {
         sendToReadHandler("DISCONNECTED");
     }
 
-    public void setReadHandler(Handler handler){
+    void setReadHandler(Handler handler){
         this.readHandler = handler;
     }
 }
