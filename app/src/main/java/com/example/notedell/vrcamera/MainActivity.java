@@ -5,7 +5,12 @@
  */
 package com.example.notedell.vrcamera;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,7 +20,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,55 +66,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Sensor magnetometer;
     private Sensor gyroscope;
 
+    private Camera mCamera;
+    private CameraPreview mPreview;
+    private int orientation;
+    private int deviceHeight;
+    private Button ibRetake;
+    private Button ibUse;
+    private Button ibCapture;
+    private FrameLayout flBtnContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);    // Register the sensor listeners
+        setContentView(R.layout.activity_main);
 
         Log.d(TAG,"On create Called");
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        //writeHandler = ConnectBluetooth.btt.getWriteHandler();
 
         Log.d(TAG, "WriteHandler called");
 
-        ConnectBluetooth.btt.setReadHandler(readHandler);
+        //ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
 
         txtAzimuth = (TextView) findViewById(R.id.txtAzimuth);
         txtPitch = (TextView) findViewById(R.id.txtPitch);
         txtRoll = (TextView) findViewById(R.id.txtRoll);
-        tvRead = (TextView) findViewById(R.id.tvRead);
+        flBtnContainer = (FrameLayout) findViewById(R.id.flBtnContainer);
 
-    }
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        deviceHeight = display.getHeight();
 
-    /***
-     * Timer which controls the data that is sent
-     */
-    private void turnOnTimer(){
-        task = new TimerTask() {
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        sendPosition();
-                    }
-                });
-            }
-        };
-
-        timerAtual.schedule(task, 300, 50);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if(ConnectBluetooth.btt == null) {
-            startConnectBluetooth();
+            //startConnectBluetooth();
         }
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
+        createCamera();
     }
 
     @Override
@@ -116,7 +124,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             start = false;
             timerAtual.cancel();
         }
+        releaseCamera();
 
+        // removing the inserted view - so when we come back to the app we
+        // won't have the views on top of each other.
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.removeViewAt(0);
+
+
+    }
+
+    /***
+     * Timer which controls the data that is sent
+     */
+    private void turnOnTimer(){
+        task = new TimerTask() {
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        //sendPosition();
+                    }
+                });
+            }
+        };
+
+        timerAtual.schedule(task, 300, 50);
     }
 
     @Override
@@ -321,6 +353,94 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Intent intent = new Intent(getApplicationContext(),ConnectBluetooth.class);
         startActivity(intent);
         close();
+    }
+
+    private void createCamera() {
+        // Create an instance of Camera
+        mCamera = getCameraInstance();
+
+        // Setting the right parameters in the camera
+        Camera.Parameters params = mCamera.getParameters();
+        //params.setPictureSize(1600, 1200);
+        //params.setPictureFormat(PixelFormat.JPEG);
+        //params.setJpegQuality(85);
+        params.set("orientation", "portrait");
+        params.setRotation(90);
+        mCamera.setParameters(params);
+
+        // Create our Preview view and set it as the content of our activity.
+        mPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+
+        // Calculating the width of the preview so it is proportional.
+        float widthFloat = (float) (deviceHeight) * 4 / 3;
+        int width = Math.round(widthFloat);
+
+        // Resizing the LinearLayout so we can make a proportional preview. This
+        // approach is not 100% perfect because on devices with a really small
+        // screen the the image will still be distorted - there is place for
+        // improvment.
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, deviceHeight);
+        preview.setLayoutParams(layoutParams);
+
+        // Adding the camera preview after the FrameLayout and before the button
+        // as a separated element.
+        preview.addView(mPreview, 0);
+    }
+
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            // attempt to get a Camera instance
+            c = Camera.open();
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+
+        // returns null if camera is unavailable
+        return c;
+    }
+
+    private void releaseCamera() {
+        if (mCamera != null) {
+            mCamera.release(); // release the camera for other applications
+            mCamera = null;
+        }
+    }
+
+    /** Check if this device has a camera */
+    private boolean checkCameraHardware(Context context) {
+        // this device has a camera
+// no camera on this device
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+    }
+
+    public static void setCameraDisplayOrientation(Activity activity,
+                                                   int cameraId, android.hardware.Camera camera) {
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break;
+            case Surface.ROTATION_90: degrees = 90; break;
+            case Surface.ROTATION_180: degrees = 180; break;
+            case Surface.ROTATION_270: degrees = 270; break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
     }
 
 }
