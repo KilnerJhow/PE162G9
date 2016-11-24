@@ -8,11 +8,9 @@ import android.view.Surface;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-/**
- * Created by Note Dell on 24/11/2016.
- */
 
-public class CameraView {
+
+class CameraView {
 
 
     private Camera mCamera;

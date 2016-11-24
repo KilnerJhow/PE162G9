@@ -10,6 +10,8 @@ import java.io.IOException;
 
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+
+    private static final String TAG = "CameraPreview";
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
@@ -35,7 +37,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
         } catch (IOException e) {
-            Log.d("DG_DEBUG", "Error setting camera preview: " + e.getMessage());
+            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
 
     }
@@ -64,11 +66,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
 
         } catch (Exception e) {
-            Log.d("DG_DEBUG", "Error starting camera preview: " + e.getMessage());
+            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
+        mCamera.release();
         // empty. Take care of releasing the Camera preview in your activity.
     }
 

@@ -17,9 +17,7 @@ import android.widget.Toast;
 
 import java.util.Set;
 
-/**
- * Created by Note Dell on 06/10/2016.
- */
+
 public class ConnectBluetooth extends ListActivity{
 
     private static final String TAG = "Connect Bluetooth";
