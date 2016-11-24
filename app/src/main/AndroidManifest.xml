@@ -22,7 +22,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ConnectBluetooth" />
-        <activity android:name=".DgCamActivity"></activity>
     </application>
 
 </manifest>
