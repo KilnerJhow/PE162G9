@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -31,7 +32,8 @@
                     android:layout_alignParentStart="true"
                 android:textColor="@android:color/background_light"
                 android:textColorHighlight="@android:color/background_dark"
-                android:textColorHint="@android:color/background_dark" />
+                android:textColorHint="@android:color/background_dark"
+                android:shadowColor="@android:color/background_dark" />
 
             <TextView
                     android:layout_width="match_parent"
@@ -43,7 +45,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginBottom="0dp"
-                android:textColor="@android:color/background_light" />
+                android:textColor="@android:color/background_light"
+                android:shadowColor="@android:color/background_dark"/>
 
             <TextView
                     android:layout_width="match_parent"
@@ -54,7 +57,8 @@
                     android:layout_above="@+id/button2"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                android:textColor="@android:color/background_light" />
+                android:textColor="@android:color/background_light"
+                android:shadowColor="@android:color/background_dark"/>
         </LinearLayout>
 
     </FrameLayout>
