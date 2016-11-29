@@ -1,28 +1,16 @@
 package com.example.notedell.vrcamera;
 
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.majorkernelpanic.streaming.MediaStream;
-import net.majorkernelpanic.streaming.Session;
-import net.majorkernelpanic.streaming.SessionBuilder;
-import net.majorkernelpanic.streaming.audio.AudioQuality;
-import net.majorkernelpanic.streaming.gl.SurfaceView;
-import net.majorkernelpanic.streaming.rtsp.RtspClient;
-import net.majorkernelpanic.streaming.video.VideoQuality;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -32,9 +20,18 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.majorkernelpanic.streaming.Session;
+import net.majorkernelpanic.streaming.SessionBuilder;
+import net.majorkernelpanic.streaming.audio.AudioQuality;
+import net.majorkernelpanic.streaming.gl.SurfaceView;
+import net.majorkernelpanic.streaming.rtsp.RtspClient;
+import net.majorkernelpanic.streaming.video.VideoQuality;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Streaming extends Activity implements
         View.OnClickListener,
@@ -97,7 +94,7 @@ public class Streaming extends Activity implements
         mButtonSettings.setOnClickListener(this);
         mButtonFlash.setTag("off");
 
-        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(Streaming.this);
         if (mPrefs.getString("uri", null) != null) mLayoutServerSettings.setVisibility(View.GONE);
         mEditTextURI.setText(mPrefs.getString("uri", getString(R.string.default_stream)));
         mEditTextPassword.setText(mPrefs.getString("password", ""));
@@ -223,7 +220,7 @@ public class Streaming extends Activity implements
             String ip,port,path;
 
             // We save the content user inputs in Shared Preferences
-            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(Streaming.this);
             SharedPreferences.Editor editor = mPrefs.edit();
             editor.putString("uri", mEditTextURI.getText().toString());
             editor.putString("password", mEditTextPassword.getText().toString());
@@ -251,7 +248,7 @@ public class Streaming extends Activity implements
     private void logError(final String msg) {
         final String error = (msg == null) ? "Error unknown" : msg;
         // Displays a popup to report the eror to the user
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Streaming.this);
         builder.setMessage(msg).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {}
         });

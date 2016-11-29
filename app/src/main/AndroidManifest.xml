@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ConnectBluetooth" />
+        <activity android:name=".Streaming"/>
     </application>
 
 </manifest>
