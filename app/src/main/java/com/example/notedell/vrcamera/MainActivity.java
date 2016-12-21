@@ -7,7 +7,6 @@ package com.example.notedell.vrcamera;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -81,14 +80,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         Log.d(TAG,"On create Called");
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        //writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        writeHandler = ConnectBluetooth.btt.getWriteHandler();
 
         Log.d(TAG, "WriteHandler called");
 
-        //ConnectBluetooth.btt.setReadHandler(readHandler);
+        ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
 
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         deviceHeight = display.getHeight();
-        camView = new CameraView(this, preview, deviceHeight);
+        //camView = new CameraView(this, preview, deviceHeight);
 
     }
 
@@ -108,11 +107,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         super.onResume();
         if(ConnectBluetooth.btt == null) {
-            //startConnectBluetooth();
+            startConnectBluetooth();
         }
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-        camView.createCamera();
+        //camView.createCamera();
     }
 
     @Override
@@ -125,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             start = false;
             timerAtual.cancel();
         }
-        camView.releaseCamera();
+        //camView.releaseCamera();
 
         // removing the inserted view - so when we come back to the app we
         // won't have the views on top of each other.
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.removeViewAt(0);
+        //FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        //preview.removeViewAt(0);
 
 
     }
@@ -238,8 +237,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int az = (int) azimuth;
         int pt = (int) pitch;
         int ro = (int) roll;
-        //String data = Integer.toString(az) + "&" +Integer.toString(pt) + "&" + Integer.toString(ro) + "&" ;
-        String data = Integer.toString(az) + "\n" + Integer.toString(pt) + "\n" + Integer.toString(ro) + "\n";
+        String data = Integer.toString(az) + "&" +Integer.toString(pt) + "&" + Integer.toString(ro) + "&" ;
+        //String data = Integer.toString(az) + "\n" + Integer.toString(pt) + "\n" + Integer.toString(ro) + "\n";
 
         Log.d(TAG, "Button pressed");
 

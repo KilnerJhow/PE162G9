@@ -9,10 +9,47 @@
     android:orientation="vertical">
 
 
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Valor Inicial"
+            android:id="@+id/button"
+            android:layout_gravity="center_horizontal"
+            android:onClick="initialValue"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/button2"
+            android:layout_toStartOf="@+id/button2"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+        android:layout_weight="1" />
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desconectar"
+            android:id="@+id/button2"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="disconnectButtonPressed"
+        android:layout_weight="1" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar"
+        android:id="@+id/button3"
+        android:layout_gravity="center_horizontal"
+        android:onClick="send"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_weight="1" />
+
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="145dp" >
 
         <LinearLayout
             android:orientation="vertical"
@@ -55,53 +92,10 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                 android:textColor="@android:color/background_light" />
+
         </LinearLayout>
 
     </FrameLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:minHeight="179dp">
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Valor Inicial"
-                android:id="@+id/button"
-                android:layout_gravity="center_horizontal"
-                android:onClick="initialValue"
-                android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/button2"
-                android:layout_toStartOf="@+id/button2"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-            android:layout_weight="1" />
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Desconectar"
-                android:id="@+id/button2"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:onClick="disconnectButtonPressed"
-            android:layout_weight="1" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Iniciar"
-            android:id="@+id/button3"
-            android:layout_gravity="center_horizontal"
-            android:onClick="send"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_weight="1" />
-    </LinearLayout>
 
 
 </LinearLayout>

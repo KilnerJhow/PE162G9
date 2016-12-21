@@ -30,10 +30,9 @@ public class ConnectBluetooth extends ListActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*  Esse trecho não é essencial, mas dá um melhor visual à lista.
-            Adiciona um título à lista de dispositivos pareados utilizando
-        o layout text_header.xml.
-        */
+        /*
+        Se existir uma conexão ativa ao iniciar essa Activity, a mesma será encerrada
+         */
 
         if(btt != null) {
             btt.interrupt();
@@ -41,6 +40,10 @@ public class ConnectBluetooth extends ListActivity{
             Log.d(TAG, "Connection Ended.");
         }
 
+
+        /*
+        Necessário para utilizar a ListActivity
+         */
         ListView lv = getListView();
         LayoutInflater inflater = getLayoutInflater();
         View header = inflater.inflate(R.layout.act_paired_devices, lv, false);
@@ -73,7 +76,8 @@ public class ConnectBluetooth extends ListActivity{
 
 
 
-    /*  Este método é executado quando o usuário seleciona um elemento da lista.
+    /**
+     * This Method is executed when the user click in listview
      */
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -123,7 +127,7 @@ public class ConnectBluetooth extends ListActivity{
             }
         });
 
-        // Run the thread
+        // Inicia a Thread
         btt.start();
 
         TextView tv = (TextView) findViewById(R.id.statusText);
@@ -133,6 +137,9 @@ public class ConnectBluetooth extends ListActivity{
     }
 
 
+    /*
+    Método que recebe a resposta do usuário ao ser invocado pelo startActivityForResult
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -163,6 +170,9 @@ public class ConnectBluetooth extends ListActivity{
 
     }
 
+    /*
+    Fecha a Activity
+     */
     public void close() {
         this.finish();
     }
