@@ -242,8 +242,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             int pt = (int) pitch;
             int ro = (int) roll;
             //String data = Double.toString(az) + "\n" + Double.toString(pt) + "\n" + Double.toString(ro) + "\n";
-            String data = "a" + Integer.toString(az) + "&" +
-                    "p" + Integer.toString(pt) + "&" + "r" + Integer.toString(ro) + "&";
+            //String data = "a" + Integer.toString(az) + "&" + "r" + Integer.toString(ro) + "&";
+            String data = Integer.toString(az) + "&" + Integer.toString(pt) + "&" + Integer.toString(ro) + "&";
 
             Message msg = Message.obtain();
             msg.obj = data;
@@ -262,9 +262,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int az = (int) azimuth;
         int pt = (int) pitch;
         int ro = (int) roll;
-        String data = Integer.toString(az) + "&" +Integer.toString(pt) + "&" + Integer.toString(ro) + "&" ;
+        //String data = "a" + Integer.toString(az) + "&" + "r" + Integer.toString(ro) + "&";
         //String data = Integer.toString(az) + "\n" + Integer.toString(pt) + "\n" + Integer.toString(ro) + "\n";
-
+        String data = Integer.toString(az) + "&" + Integer.toString(pt) + "&" + Integer.toString(ro) + "&";
         Log.d(TAG, "Button pressed");
 
         Message msg = Message.obtain();
