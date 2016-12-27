@@ -1,4 +1,4 @@
-package com.example.notedell.vrcamera;
+package com.example.notedell.vrcamera.Camera;
 
 import android.content.Context;
 import android.hardware.Camera;

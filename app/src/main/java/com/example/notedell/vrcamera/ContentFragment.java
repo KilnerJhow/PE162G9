@@ -16,8 +16,8 @@ public class ContentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstaceState) {
-        View v = inflater.inflate(R.layout.fragment1, container, false);
-        return v;
+        View view = inflater.inflate(R.layout.fragment1, null);
+        return view;
     }
 
 }

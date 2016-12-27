@@ -1,4 +1,4 @@
-package com.example.notedell.vrcamera;
+package com.example.notedell.vrcamera.Camera;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,8 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 
-
-class CameraView {
+public class CameraView {
 
 
     private Camera mCamera;

@@ -25,6 +25,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.notedell.vrcamera.Camera.CameraPreview;
+import com.example.notedell.vrcamera.Camera.CameraView;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -83,11 +86,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        //writeHandler = ConnectBluetooth.btt.getWriteHandler();
 
         Log.d(TAG, "WriteHandler called");
 
-        ConnectBluetooth.btt.setReadHandler(readHandler);
+        //ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
 
@@ -106,24 +109,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
+        /*
         if(ConnectBluetooth.btt == null) {
             startConnectBluetooth();
-        }
+        }*/
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         //camView.createCamera();
+        if(start) setInitialValue(azimuth, pitch, roll);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
-        if(ConnectBluetooth.btt != null) {
+        /*if(ConnectBluetooth.btt != null) {
             ConnectBluetooth.btt.interrupt();
             ConnectBluetooth.btt = null;
             start = false;
             timerAtual.cancel();
-        }
+        }*/
         //camView.releaseCamera();
 
         // removing the inserted view - so when we come back to the app we
@@ -142,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
-                        //sendPosition();
+                        sendPosition();
                     }
                 });
             }
@@ -152,7 +157,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {  }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        Log.d(TAG, "Sensor Changed");
+    }
 
 
 
@@ -178,13 +185,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //orientation[2] = roll - Y - 90° a -90°
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                /*azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
+                azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
                 pitch = (float)(((orientation[1]*180/Math.PI))+90);
-                roll = (float)(((orientation[2]*180/Math.PI)));*/
+                roll = (float)(((orientation[2]*180/Math.PI)));
 
-                azimuth = (float) Math.toDegrees(orientation[0]);
-                pitch = (float) Math.toDegrees(orientation[1]);
-                roll = (float) Math.toDegrees(orientation[2]);
+                //azimuth = (float) Math.toDegrees(orientation[0]);
+                //pitch = (float) Math.toDegrees(orientation[1]);
+                //roll = (float) Math.toDegrees(orientation[2]);
             }
 
             txtAzimuth.setText("Azimuth: " + (int)azimuth);
@@ -355,6 +362,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         close();
     }
 
+
+    private void sendVariationPosition(int azimuth, int pitch, int roll) {
+
+
+
+    }
+
+    private void setInitialValue(float mAzimuth, float mPitch, float mRoll) {
+
+    }
 
 }
 

@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.notedell.vrcamera.Threads.BluetoothThread;
+
 import java.util.Set;
 
 
