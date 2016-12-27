@@ -46,18 +46,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView txtAzimuth;
     private TextView txtPitch;
     private TextView txtRoll;
-    private TextView tvRead;
+    private TextView readValue;
 
     private float[] mGravity;
     private float[] mGeomagnetic;
     private float[] mGyroscope;
+
     private float azimuth;
     private float pitch;
     private float roll;
 
+    private int zeroAzimuth;
+    private int zeroPitch;
+    private int zeroRoll;
+
     static final float ALPHA = 0.25f;
 
     private static boolean start = false;
+    private boolean init = false;
 
     private SensorManager mSensorManager;
     private Sensor accelerometer;
@@ -86,17 +92,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        //writeHandler = ConnectBluetooth.btt.getWriteHandler();
+        writeHandler = ConnectBluetooth.btt.getWriteHandler();
 
         Log.d(TAG, "WriteHandler called");
 
-        //ConnectBluetooth.btt.setReadHandler(readHandler);
+        ConnectBluetooth.btt.setReadHandler(readHandler);
 
         checkSensors();
 
         txtAzimuth = (TextView) findViewById(R.id.txtAzimuth);
         txtPitch = (TextView) findViewById(R.id.txtPitch);
         txtRoll = (TextView) findViewById(R.id.txtRoll);
+        readValue = (TextView) findViewById(R.id.readValue);
         flBtnContainer = (FrameLayout) findViewById(R.id.flBtnContainer);
         preview = (FrameLayout) findViewById(R.id.camera_preview);
 
@@ -109,26 +116,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        /*
+
         if(ConnectBluetooth.btt == null) {
             startConnectBluetooth();
-        }*/
+        }
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         //camView.createCamera();
-        if(start) setInitialValue(azimuth, pitch, roll);
+        init = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
-        /*if(ConnectBluetooth.btt != null) {
+        if(ConnectBluetooth.btt != null) {
             ConnectBluetooth.btt.interrupt();
             ConnectBluetooth.btt = null;
             start = false;
             timerAtual.cancel();
-        }*/
+        }
         //camView.releaseCamera();
 
         // removing the inserted view - so when we come back to the app we
@@ -137,6 +144,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //preview.removeViewAt(0);
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        init = false;
     }
 
     /***
@@ -168,8 +181,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
             mGravity = lowPass(event.values.clone(),mGravity);
+            //mGravity = event.values.clone();
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
             mGeomagnetic = lowPass(event.values.clone(),mGeomagnetic);
+            //mGeomagnetic = event.values.clone();
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE)
             mGyroscope = event.values.clone();
 
@@ -185,14 +200,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //orientation[2] = roll - Y - 90° a -90°
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
-                pitch = (float)(((orientation[1]*180/Math.PI))+90);
-                roll = (float)(((orientation[2]*180/Math.PI)));
+                //azimuth = (float)(((orientation[0]*180)/Math.PI)+180);
+                //pitch = (float)(((orientation[1]*180/Math.PI))+90);
+                //roll = (float)(((orientation[2]*180/Math.PI)));
 
-                //azimuth = (float) Math.toDegrees(orientation[0]);
-                //pitch = (float) Math.toDegrees(orientation[1]);
-                //roll = (float) Math.toDegrees(orientation[2]);
+                azimuth = (float) Math.toDegrees(orientation[0]);
+                pitch = (float) Math.toDegrees(orientation[1]);
+                roll = (float) Math.toDegrees(orientation[2]);
             }
+
+            if(init) setInitialValue(azimuth, pitch, roll);
 
             txtAzimuth.setText("Azimuth: " + (int)azimuth);
             txtPitch.setText("Pitch: " + (int)pitch);
@@ -225,7 +242,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             int pt = (int) pitch;
             int ro = (int) roll;
             //String data = Double.toString(az) + "\n" + Double.toString(pt) + "\n" + Double.toString(ro) + "\n";
-            String data = Integer.toString(az) + "&" + Integer.toString(pt) + "&" + Integer.toString(ro) + "&";
+            String data = "a" + Integer.toString(az) + "&" +
+                    "p" + Integer.toString(pt) + "&" + "r" + Integer.toString(ro) + "&";
 
             Message msg = Message.obtain();
             msg.obj = data;
@@ -258,26 +276,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         turnOnTimer();
 
     }
-
-    /**
-     * Sends a special value which is treated as initial value, when the button
-     * "Valor Inicial" is pressioned.
-     */
-    public void initialValue(View view){
-
-        int az = (int) azimuth;
-        int pt = (int) pitch;
-        int ro = (int) roll;
-        String data = "$" + Integer.toString(az) + "&" +Integer.toString(pt) + "&" +
-                Integer.toString(ro) + "&" ;
-        Message msg = Message.obtain();
-        msg.obj = data;
-        writeHandler.sendMessage(msg);
-
-
-    }
-
-
 
     private void checkSensors() {
 
@@ -315,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             String s = (String) msg.obj;
             Log.d(TAG, s);
 
-            tvRead.setText(s);
+            readValue.setText("Valor no Arduino: " + s);
 
             if (s.equals("DISCONNECT")) {
                     Toast.makeText(getApplicationContext(),"Desconectado", Toast.LENGTH_SHORT).show();
@@ -330,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * Used for disconnect the bluetooth socket
      * @param v
      */
-    public void disconnectButtonPressed(View v) {
+    public void disconnectButton(View v) {
         Log.v(TAG, "Disconnect button pressed.");
 
         if(ConnectBluetooth.btt != null) {
@@ -363,14 +361,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-    private void sendVariationPosition(int azimuth, int pitch, int roll) {
+    private void sendVariationPosition() {
+
+        if(start) {
+
+            if(azimuth <= 180) {
+
+            }
 
 
+        }
 
     }
 
     private void setInitialValue(float mAzimuth, float mPitch, float mRoll) {
 
+        zeroAzimuth = (int) mAzimuth;
+        zeroPitch = (int) mPitch;
+        zeroRoll = (int) mRoll;
     }
 
 }

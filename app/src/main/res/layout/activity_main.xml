@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -9,45 +10,24 @@
     android:orientation="vertical">
 
 
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Valor Inicial"
-            android:id="@+id/button"
-            android:layout_gravity="center_horizontal"
-            android:onClick="initialValue"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/button2"
-            android:layout_toStartOf="@+id/button2"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-        android:layout_weight="0.90" />
-
-    <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Desconectar"
-            android:id="@+id/button2"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:onClick="disconnectButtonPressed"
-        android:layout_weight="1" />
-
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Iniciar"
-        android:id="@+id/button3"
-        android:layout_gravity="center_horizontal"
-        android:onClick="send"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textColor="@android:color/background_dark"/>
+    </LinearLayout>
 
     <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
@@ -59,10 +39,21 @@
         android:textColor="@android:color/background_dark"
         android:textColorHighlight="@android:color/background_dark"
         android:textColorHint="@android:color/background_dark"
-        android:layout_weight="1" />
+        android:layout_marginLeft="0dp" />
 
     <TextView
-            android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/txtRoll"
+        android:layout_above="@+id/button2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
@@ -72,19 +63,53 @@
             android:layout_alignParentStart="true"
             android:layout_marginBottom="0dp"
         android:textColor="@android:color/background_dark"
-        android:layout_weight="1" />
+        android:layout_marginLeft="0dp" />
+
+    <Button
+        android:text="Iniciar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:onClick="send"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Arduino"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textColor="@android:color/background_dark" />
+    </LinearLayout>
 
     <TextView
-            android:layout_width="match_parent"
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/readValue"
+        android:textSize="18sp"
+        android:textColor="@android:color/background_dark" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Disconnect"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/txtRoll"
-            android:layout_above="@+id/button2"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-        android:textColor="@android:color/background_dark"
-        android:layout_weight="1" />
+            android:id="@+id/button3"
+            android:onClick="disconnectButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
 
 
 </LinearLayout>
